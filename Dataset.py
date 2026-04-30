@@ -1,65 +1,85 @@
 from ucimlrepo import fetch_ucirepo
-import pandas as pd
-pd.set_option('display.max_columns', None)
-# fetch dataset 
-default_of_credit_card_clients = fetch_ucirepo(id=350)
-'''
-Description of variables
-X1: Amount of the given credit (NT dollar): it includes both the individual
-consumer credit and his/her family (supplementary) credit.
-X2: Gender (1 = male; 2 = female).
-X3: Education (1 = graduate school; 2 = university; 3 = high school; 4 = others).
-X4: Marital status (1 = married; 2 = single; 3 = others).
-X5: Age (year).
-X6 - X11: History of past payment. We tracked the past monthly payment records
-(from April to September, 2005) as follows: X6 = the repayment status in September,
-2005; X7 = the repayment status in August, 2005; . . .;X11 = the repayment status
-in April, 2005. The measurement scale for the repayment status is: -1 = pay duly;
-1 = payment delay for one month; 2 = payment delay for two months; . . .; 8 = payment
-delay for eight months; 9 = payment delay for nine months and above.
-X12-X17: Amount of bill statement (NT dollar). X12 = amount of bill statement in
-September, 2005; X13 = amount of bill statement in August, 2005; . . .; X17 = amount
-of bill statement in April, 2005. 
-X18-X23: Amount of previous payment (NT dollar). X18 = amount paid in September, 
-2005; X19 = amount paid in August, 2005; . . .;X23 = amount paid in April, 2005.
-'''
-# data (as pandas dataframes) 
-df = default_of_credit_card_clients.data.features
-y = default_of_credit_card_clients.data.targets
 
-rename_dict = {
-    'X1': 'LIMIT_BAL',
-    'X2': 'GENDER',
-    'X3': 'EDUCATION',
-    'X4': 'MARRIAGE',
-    'X5': 'AGE',
+# fetch dataset
+polish_companies_bankruptcy = fetch_ucirepo(id=365)
 
-    'X6': 'PAY_0',
-    'X7': 'PAY_2',
-    'X8': 'PAY_3',
-    'X9': 'PAY_4',
-    'X10': 'PAY_5',
-    'X11': 'PAY_6',
+# data (as pandas dataframes)
+X = polish_companies_bankruptcy.data.features
+y = polish_companies_bankruptcy.data.targets
 
-    'X12': 'BILL_AMT1',
-    'X13': 'BILL_AMT2',
-    'X14': 'BILL_AMT3',
-    'X15': 'BILL_AMT4',
-    'X16': 'BILL_AMT5',
-    'X17': 'BILL_AMT6',
-
-    'X18': 'PAY_AMT1',
-    'X19': 'PAY_AMT2',
-    'X20': 'PAY_AMT3',
-    'X21': 'PAY_AMT4',
-    'X22': 'PAY_AMT5',
-    'X23': 'PAY_AMT6'
+rename_map = {
+    "A1": "net_profit_to_total_assets",
+    "A2": "total_liabilities_to_total_assets",
+    "A3": "working_capital_to_total_assets",
+    "A4": "current_assets_to_short_term_liabilities",
+    "A5": "cash_securities_receivables_minus_st_liabilities_to_operating_expenses_minus_depreciation_days",
+    "A6": "retained_earnings_to_total_assets",
+    "A7": "ebit_to_total_assets",
+    "A8": "book_value_equity_to_total_liabilities",
+    "A9": "sales_to_total_assets",
+    "A10": "equity_to_total_assets",
+    "A11": "gross_profit_extra_items_financial_expenses_to_total_assets",
+    "A12": "gross_profit_to_short_term_liabilities",
+    "A13": "gross_profit_plus_depreciation_to_sales",
+    "A14": "gross_profit_plus_interest_to_total_assets",
+    "A15": "total_liabilities_to_gross_profit_plus_depreciation_days",
+    "A16": "gross_profit_plus_depreciation_to_total_liabilities",
+    "A17": "total_assets_to_total_liabilities",
+    "A18": "gross_profit_to_total_assets",
+    "A19": "gross_profit_to_sales",
+    "A20": "inventory_to_sales_days",
+    "A21": "sales_growth_ratio",
+    "A22": "operating_profit_to_total_assets",
+    "A23": "net_profit_to_sales",
+    "A24": "three_year_gross_profit_to_total_assets",
+    "A25": "equity_minus_share_capital_to_total_assets",
+    "A26": "net_profit_plus_depreciation_to_total_liabilities",
+    "A27": "operating_profit_to_financial_expenses",
+    "A28": "working_capital_to_fixed_assets",
+    "A29": "log_total_assets",
+    "A30": "total_liabilities_minus_cash_to_sales",
+    "A31": "gross_profit_plus_interest_to_sales",
+    "A32": "current_liabilities_to_cost_of_goods_sold_days",
+    "A33": "operating_expenses_to_short_term_liabilities",
+    "A34": "operating_expenses_to_total_liabilities",
+    "A35": "profit_on_sales_to_total_assets",
+    "A36": "total_sales_to_total_assets",
+    "A37": "current_assets_minus_inventories_to_long_term_liabilities",
+    "A38": "constant_capital_to_total_assets",
+    "A39": "profit_on_sales_to_sales",
+    "A40": "quick_assets_minus_receivables_to_short_term_liabilities",
+    "A41": "total_liabilities_to_monthly_operating_profit_plus_depreciation",
+    "A42": "operating_profit_to_sales",
+    "A43": "receivables_and_inventory_turnover_days",
+    "A44": "receivables_to_sales_days",
+    "A45": "net_profit_to_inventory",
+    "A46": "current_assets_minus_inventory_to_short_term_liabilities",
+    "A47": "inventory_to_cost_of_goods_sold_days",
+    "A48": "ebitda_to_total_assets",
+    "A49": "ebitda_to_sales",
+    "A50": "current_assets_to_total_liabilities",
+    "A51": "short_term_liabilities_to_total_assets",
+    "A52": "short_term_liabilities_to_cost_of_goods_sold_days",
+    "A53": "equity_to_fixed_assets",
+    "A54": "constant_capital_to_fixed_assets",
+    "A55": "working_capital",
+    "A56": "gross_margin",
+    "A57": "liquid_working_capital_to_adjusted_sales_cost",
+    "A58": "total_costs_to_total_sales",
+    "A59": "long_term_liabilities_to_equity",
+    "A60": "sales_to_inventory",
+    "A61": "sales_to_receivables",
+    "A62": "short_term_liabilities_to_sales_days",
+    "A63": "sales_to_short_term_liabilities",
+    "A64": "sales_to_fixed_assets",
 }
-df = df.rename(columns=rename_dict)
 
-# metadata 
-print(default_of_credit_card_clients.metadata)
+X = X.rename(columns=rename_map)
 
-print(df.shape)
-print(df.head())
-print(df.columns)
+print(X.columns)
+print(X.head())
+# metadata
+print(polish_companies_bankruptcy.metadata)
+
+# variable information
+print(polish_companies_bankruptcy.variables)
