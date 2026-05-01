@@ -1,16 +1,8 @@
 from ucimlrepo import fetch_ucirepo
 import pandas as pd
-from sklearn.model_selection import train_test_split
-from sklearn.impute import SimpleImputer
-from sklearn.preprocessing import StandardScaler
-# fetch dataset
-polish_companies_bankruptcy = fetch_ucirepo(id=365)
 
-# data (as pandas dataframes)
-X = polish_companies_bankruptcy.data.features
-y = polish_companies_bankruptcy.data.targets
-
-rename_map = {
+class PolishBankruptcyDataset:
+    DEFAULT_RENAME_MAP ={
     "A1": "net_profit_to_total_assets",
     "A2": "total_liabilities_to_total_assets",
     "A3": "working_capital_to_total_assets",
@@ -77,55 +69,49 @@ rename_map = {
     "A64": "sales_to_fixed_assets",
 }
 
-X = X.rename(columns=rename_map)
-pd.set_option('display.max_columns', None)
-print(X.columns)
-print(X.tail())
+    def __init__(self, year:int):
+        valid_years = [1, 2, 3, 4, 5]
+        if year not in valid_years:
+            raise ValueError("year must be an integer from 1 to 5")
+
+        self.year = year
+        self.X = None
+        self.y = None
+
+    def load_data(self):
+        polish_companies_bankruptcy = fetch_ucirepo(id=365)
+
+        # data (as pandas dataframes)
+        self.X = polish_companies_bankruptcy.data.features
+        self.y = polish_companies_bankruptcy.data.targets
+        return self
+
+    def rename_columns(self, rename_map=None):
+        if rename_map is None:
+            rename_map = self.DEFAULT_RENAME_MAP
+
+        self.X = self.X.rename(columns=rename_map)
+        return self
+
+    def _get_year_dataset(self):
+        # Ensure y is a Series
+
+        self.y = self.y.squeeze()
+
+        # Filter rows for the given year
+        mask = self.X['year'] == self.year
+        X_year = self.X.loc[mask].copy()
+        y_year = self.y.loc[mask].copy()
+
+        # Drop 'year' column (VERY IMPORTANT)
+        X_year = X_year.drop(columns=['year'])
+
+        return X_year, y_year
+
+    def get_data(self):
+        self.load_data()
+        self.rename_columns()
+        return self._get_year_dataset(self.X, self.y, self.year)
 
 
-missing_percent = X.isnull().mean() * 100
-missing_percent = missing_percent.sort_values(ascending=False)
 
-print(missing_percent)
-
-#Train-test split
-X_train, X_test, y_train, y_test = train_test_split(
-    X, y, test_size=0.2, random_state=42, stratify=y
-)
-
-#median imputation
-imputer = SimpleImputer(strategy='median')
-
-X_train_imputed = imputer.fit_transform(X_train)
-X_test_imputed = imputer.transform(X_test)
-
-#Convert back to DataFrame
-X_train_imputed = pd.DataFrame(X_train_imputed, columns=X.columns)
-X_test_imputed = pd.DataFrame(X_test_imputed, columns=X.columns)
-
-'''
-print(X_train_imputed.isnull().sum().sum())  # should be 0
-print(X_test_imputed.isnull().sum().sum())   # should be 0
-'''
-
-scaler = StandardScaler()
-
-X_train_scaled = scaler.fit_transform(X_train_imputed)
-X_test_scaled = scaler.transform(X_test_imputed)
-
-
-def get_year_dataset(X, y, year_value):
-   # Ensure y is a Series
-    y = y.squeeze()
-
-    # Filter rows for the given year
-    mask = X['year'] == year_value
-    X_year = X.loc[mask].copy()
-    y_year = y.loc[mask].copy()
-
-    # Drop 'year' column (VERY IMPORTANT)
-    X_year = X_year.drop(columns=['year'])
-
-    return X_year, y_year
-
-X_3, y_3 = get_year_dataset(X, y, 3)
