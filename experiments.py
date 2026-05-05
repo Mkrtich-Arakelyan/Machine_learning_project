@@ -54,7 +54,7 @@ class BankruptcyExperiment:
         all_grid_results = []
 
         cv = StratifiedKFold(
-            n_splits=3,
+            n_splits=2,
             shuffle=True,
             random_state=42
         )
@@ -91,6 +91,8 @@ class BankruptcyExperiment:
             result["scoring_used"] = self.scoring
 
             final_results.append(result)
+            print(f"Finished {model_name}", flush=True)
+            print(result, flush=True)
 
             grid_df = pd.DataFrame(grid.cv_results_)
             grid_df["model"] = model_name
