@@ -19,7 +19,7 @@ RANDOM_STATE = 42
 
 def clip_extreme_values(X):
     X = np.asarray(X)
-    return np.clip(X, -10000, 10000)
+    return np.clip(X, -100000, 100000)
 
 def get_model_configs():
 
@@ -42,7 +42,7 @@ def get_model_configs():
                 ("model", GaussianNB())
             ]),
             "params": {
-                "model__var_smoothing": [1e-9, 1e-8,  1e-6]
+                "model__var_smoothing": [1e-9, 1e-8, 1e-6]
             }
         },
 
@@ -52,14 +52,14 @@ def get_model_configs():
                 ("clipper", FunctionTransformer(clip_extreme_values)),
                 ("scaler", StandardScaler()),
                 ("model", LogisticRegression(
-                    max_iter=5000,
+                    max_iter=100,
                     solver="liblinear",
                     class_weight="balanced",
                     random_state=RANDOM_STATE
                 ))
             ]),
             "params": {
-                "model__C": [0.01, 0.1, 1],
+                "model__C": [0.01, 0.1,  1],
                 "model__penalty": ["l1", "l2"]
             }
         },
@@ -101,8 +101,8 @@ def get_model_configs():
             ]),
             "params": {
                 "model__criterion": ["gini", "entropy"],
-                "model__max_depth": [ 5, 10, 15, None],
-                "model__min_samples_split": [ 10, 25],
+                "model__max_depth": [ 5, 10,  15, None],
+                "model__min_samples_split": [ 0, 25],
                 "model__min_samples_leaf": [5, 10],
                 "model__max_features": [None, "sqrt"]
             }
