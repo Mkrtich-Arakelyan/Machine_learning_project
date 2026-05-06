@@ -5,7 +5,7 @@ from sklearn.model_selection import train_test_split, GridSearchCV, StratifiedKF
 
 from Dataset import PolishBankruptcyDataset
 from model_configs import get_model_configs
-from evaluations import evaluate_model
+from evaluations import evaluate_model, evaluate_thresholds
 
 
 class BankruptcyExperiment:
@@ -24,6 +24,7 @@ class BankruptcyExperiment:
 
         self.results = None
         self.grid_results = None
+        self.threshold_results = None
 
         self.best_models = {}
         self.best_params = {}
@@ -52,6 +53,7 @@ class BankruptcyExperiment:
 
         final_results = []
         all_grid_results = []
+        all_threshold_results = []
 
         cv = StratifiedKFold(
             n_splits=2,
@@ -90,7 +92,18 @@ class BankruptcyExperiment:
             result[f"best_cv_{self.scoring}"] = grid.best_score_
             result["scoring_used"] = self.scoring
 
+
             final_results.append(result)
+
+            threshold_rows = evaluate_thresholds(
+                model_name=model_name,
+                year=self.year,
+                estimator=best_model,
+                X_test=self.X_test,
+                y_test=self.y_test
+            )
+
+            all_threshold_results.extend(threshold_rows)
             print(f"Finished {model_name}", flush=True)
             print(result, flush=True)
 
@@ -103,6 +116,7 @@ class BankruptcyExperiment:
 
         self.results = pd.DataFrame(final_results)
         self.grid_results = pd.concat(all_grid_results, ignore_index=True)
+        self.threshold_results = pd.DataFrame(all_threshold_results)
 
         return self
 
@@ -137,6 +151,18 @@ class BankruptcyExperiment:
 
         return self
 
+    def show_threshold_results(self, sort_by="business_cost"):
+        if self.threshold_results is None or self.threshold_results.empty:
+            print("No threshold results available.")
+            return self
+
+        print(
+            self.threshold_results
+            .sort_values(sort_by, ascending=True)
+        )
+
+        return self
+
     def save_results(self):
         safe_scoring_name = self.scoring.lower().replace(" ", "_")
 
@@ -149,5 +175,11 @@ class BankruptcyExperiment:
             self.results_dir / f"grid_search_results_year_{self.year}_{safe_scoring_name}.csv",
             index=False
         )
+
+        if self.threshold_results is not None and not self.threshold_results.empty:
+            self.threshold_results.to_csv(
+                self.results_dir / f"threshold_results_year_{self.year}_{safe_scoring_name}.csv",
+                index=False
+            )
 
         return self

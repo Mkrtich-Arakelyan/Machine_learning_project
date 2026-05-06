@@ -2,7 +2,7 @@ from experiments import BankruptcyExperiment
 
 
 def main():
-    years = [1, 2, 3, 4, 5]
+    years = [1,2,3,4, 5]
 
     print("\nF1 SCORING")
     for year in years:
@@ -13,7 +13,6 @@ def main():
         # Step 1: load data
         exp.load_data()
 
-        # 🔥 ADD THIS HERE
         print("\nClass distribution:")
         print(exp.y.value_counts())
         print((exp.y.value_counts(normalize=True) * 100).round(2), "%")

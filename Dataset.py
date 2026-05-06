@@ -1,7 +1,6 @@
 import pandas as pd
 from scipy.io import arff
 
-
 class PolishBankruptcyDataset:
     DEFAULT_RENAME_MAP = {
         "Attr1": "net_profit_to_total_assets",
@@ -73,7 +72,6 @@ class PolishBankruptcyDataset:
     def __init__(self, year: int):
         if year not in [1, 2, 3, 4, 5]:
             raise ValueError("year must be an integer from 1 to 5")
-
         self.year = year
         self.X = None
         self.y = None
@@ -84,7 +82,7 @@ class PolishBankruptcyDataset:
         data, meta = arff.loadarff(file_path)
         df = pd.DataFrame(data)
 
-        # Convert class from bytes to integer if needed
+        # Convert class from bytes to integer
         if df["class"].dtype == object:
             df["class"] = df["class"].str.decode("utf-8").astype(int)
         else:
@@ -92,7 +90,6 @@ class PolishBankruptcyDataset:
 
         self.X = df.drop(columns=["class"])
         self.y = df["class"]
-
         return self
 
     def rename_columns(self, rename_map=None):
@@ -105,4 +102,4 @@ class PolishBankruptcyDataset:
     def get_data(self):
         self.load_data()
         self.rename_columns()
-        return self.X, self.y
+        return self.X,self.y
