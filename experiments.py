@@ -151,7 +151,7 @@ class BankruptcyExperiment:
 
         return self
 
-    def show_threshold_results(self, sort_by="business_cost"):
+    def show_threshold_results(self, sort_by="f1"):
         if self.threshold_results is None or self.threshold_results.empty:
             print("No threshold results available.")
             return self
