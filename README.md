@@ -63,7 +63,7 @@ Overall, the project shows that bankruptcy prediction should be treated as a ris
 
 Loads the yearly ARFF datasets, converts the target variable, renames columns, and returns feature matrix `X` and target vector `y`.
 
-### `model\_configs.py`
+### `model_configs.py`
 
 Defines model pipelines and hyperparameter grids for GridSearchCV.
 
