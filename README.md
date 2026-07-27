@@ -1,4 +1,3 @@
-[README.md](https://github.com/user-attachments/files/28111230/README.md)
 # Bankruptcy Prediction Using Machine Learning
 
 This project compares eight classification algorithms for bankruptcy prediction using the Polish Companies Bankruptcy dataset from the UCI Machine Learning Repository. The goal is to predict whether a company will go bankrupt based on financial ratio data.
@@ -57,19 +56,6 @@ Threshold analysis showed that the default classification threshold of 0.5 was n
 
 Overall, the project shows that bankruptcy prediction should be treated as a risk-ranking and decision-support problem, not simply as a high-accuracy classification task.
 
-Project Structure
-.
-├── Dataset.py
-├── model\_configs.py
-├── evaluations.py
-├── experiments.py
-├── visualization.py
-├── main.py
-├── results/
-├── figures/
-├── report/
-└── README.md
-```
 
 ## File Descriptions
 
